@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transaction History</title>
+    <link rel="icon" type="image/png" th:href="@{/css/images/favicon.png}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            color: #545454;
+        }
+        h2 {
+            color: #1B998B;
+            border-bottom: 2px solid #D4AF37;
+            padding-bottom: 10px;
+        }
+        table {
+            border: 2px solid #D4AF37;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        thead {
+            background-color: #1B998B;
+            color: white;
+        }
+        th, td {
+            vertical-align: middle;
+        }
+        tr:nth-child(even) {
+            background-color: #f1f1f1;
+        }
+        a {
+            color: #1B998B;
+            text-decoration: underline;
+        }
+        .alert-info {
+            background-color: #D4AF37;
+            color: white;
+            border: none;
+        }
+    </style>
+</head>
+<body>
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+
+<div class="container mt-4">
+    <h2 th:text="${historyType}">Transaction History</h2>
+
+    <div th:if="${transactions.empty}">
+        <div class="alert alert-info">No transactions found</div>
+    </div>
+
+    <table class="table table-bordered" th:unless="${transactions.empty}">
+        <thead>
+        <tr>
+            <th>Transaction ID</th>
+            <th>Property</th>
+            <th>Amount</th>
+            <th>Date</th>
+            <th>Counterparty</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="txn : ${transactions}">
+            <td th:text="${txn.transactionId}">TXN-123</td>
+            <td>
+                <a th:href="@{/properties/__${txn.propertyId}__}"
+                   th:text="${txn.propertyId}">PROP-123</a>
+            </td>
+            <td th:text="${'LKR ' + #numbers.formatDecimal(txn.price, 1, 2, 'COMMA')}">LKR 1,000,000</td>
+            <td th:text="${#temporals.format(txn.time, 'yyyy-MM-dd HH:mm')}">2023-01-01</td>
+            <td th:if="${historyType == 'Purchase History'}"
+                th:text="${'Seller: ' + txn.sellerId}">Seller: USER-123</td>
+            <td th:if="${historyType == 'Sales History'}"
+                th:text="${'Buyer: ' + txn.buyerId}">Buyer: USER-456</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

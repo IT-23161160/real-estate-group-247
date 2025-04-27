@@ -3,6 +3,7 @@ package com.realEstate.model;
 public class User {
     public static final String ROLE_BUYER = "BUYER";
     public static final String ROLE_SELLER = "SELLER";
+    public static final String ROLE_ADMIN = "ADMIN";
     private String userId;
     private String name;
     private String email;

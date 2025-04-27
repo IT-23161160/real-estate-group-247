@@ -28,7 +28,9 @@ public class UserController {
 
         session.setAttribute("user", user);
 
-        if ("SELLER".equalsIgnoreCase(user.getRole())) {
+        if (user.getRole().equalsIgnoreCase(User.ROLE_ADMIN)) {
+            return "redirect:/admin/properties";
+        } else if (user.getRole().equalsIgnoreCase(User.ROLE_SELLER)) {
             return "redirect:/properties/seller";
         } else {
             return "redirect:/properties/all";

@@ -53,6 +53,10 @@ public class UserService {
                 .orElseThrow(() -> new RuntimeException("User not found with email: " + email));
     }
 
+    public Optional<User> findByEmail(String email) {
+        return userRepository.findByEmail(email);
+    }
+
     public User updateUser(String userId, User updatedUser) {
         User existingUser = getUserById(userId);
 

@@ -25,6 +25,7 @@ public class SecurityConfig {
                         .requestMatchers("/register", "/login", "/css/**", "/js/**").permitAll()
                         .requestMatchers("/buyer/**").hasAuthority("BUYER")
                         .requestMatchers("/seller/**").hasAuthority("SELLER")
+                        .requestMatchers("/admin/**").hasAuthority("ADMIN")
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form

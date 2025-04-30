@@ -19,6 +19,11 @@ public class PropertyBSTService {
 
     @PostConstruct
     public void init() {
+        rebuildBST();
+    }
+
+    public void rebuildBST() {
+        this.root = null;
         List<Property> properties = propertyRepository.findAll();
         for (Property property : properties) {
             insert(property);
@@ -57,20 +62,21 @@ public class PropertyBSTService {
         }
     }
 
-    public Property searchByPrice(double price) {
-        return searchByPriceRec(root, price);
-    }
+    private Property searchByPriceRec(PropertyNode root, double price, String propertyId) {
+        if (root == null) {
+            return null;
+        }
 
-    private Property searchByPriceRec(PropertyNode root, double price) {
-        if (root == null || root.property.getPrice() == price) {
-            return root != null ? root.property : null;
+        if (root.property.getPrice() == price &&
+                (propertyId == null || root.property.getPropertyId().equals(propertyId))) {
+            return root.property;
         }
 
         if (price < root.property.getPrice()) {
-            return searchByPriceRec(root.left, price);
+            return searchByPriceRec(root.left, price, propertyId);
         }
 
-        return searchByPriceRec(root.right, price);
+        return searchByPriceRec(root.right, price, propertyId);
     }
 
     public void delete(Property property) {
@@ -81,13 +87,14 @@ public class PropertyBSTService {
         if (root == null) {
             return null;
         }
-
         if (property.getPrice() < root.property.getPrice()) {
             root.left = deleteRec(root.left, property);
         } else if (property.getPrice() > root.property.getPrice()) {
             root.right = deleteRec(root.right, property);
         } else {
+
             if (root.property.getPropertyId().equals(property.getPropertyId())) {
+
                 if (root.left == null) {
                     return root.right;
                 } else if (root.right == null) {
@@ -97,10 +104,10 @@ public class PropertyBSTService {
                 root.property = minValue(root.right);
                 root.right = deleteRec(root.right, root.property);
             } else {
+
                 root.right = deleteRec(root.right, property);
             }
         }
-
         return root;
     }
 

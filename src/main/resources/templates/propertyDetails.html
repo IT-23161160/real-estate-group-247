@@ -108,7 +108,7 @@
             <p class="mb-4" th:text="${property.description} ?: 'No description provided'"></p>
 
             <div class="d-grid gap-2 d-md-flex justify-content-md-start mb-5">
-                <a th:href="@{/properties/all}" class="btn btn-outline-secondary me-md-2">Back to Listings</a>
+                <a th:href="@{/properties/all}" th:if="${session.user.role != 'ADMIN'}" class="btn btn-outline-secondary me-md-2">Back to Listings</a>
             </div>
         </div>
 

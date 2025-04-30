@@ -65,6 +65,7 @@ public class PropertyService {
         Optional<Property> existingOpt = propertyRepository.findById(propertyId);
         if (existingOpt.isPresent()) {
             Property existing = existingOpt.get();
+            double oldPrice = existing.getPrice();
 
             if (imageFile != null && !imageFile.isEmpty()) {
                 propertyRepository.deleteImage(existing.getImagePath());
@@ -78,10 +79,10 @@ public class PropertyService {
             existing.setLocation(updatedProperty.getLocation());
             existing.setAvailable(updatedProperty.isAvailable());
 
-            propertyBSTService.delete(existing);
-            propertyBSTService.insert(existing);
+            Property updated = propertyRepository.update(existing);
+            propertyBSTService.rebuildBST();
 
-            return propertyRepository.update(existing);
+            return updated;
         }
         throw new IllegalArgumentException("Property not found with ID: " + propertyId);
     }

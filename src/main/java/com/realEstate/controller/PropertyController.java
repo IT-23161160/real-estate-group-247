@@ -3,10 +3,7 @@ package com.realEstate.controller;
 import com.realEstate.model.Property;
 import com.realEstate.model.Review;
 import com.realEstate.model.User;
-import com.realEstate.service.FavoriteService;
-import com.realEstate.service.PropertyService;
-import com.realEstate.service.ReviewService;
-import com.realEstate.service.UserService;
+import com.realEstate.service.*;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -19,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/properties")
@@ -31,6 +29,8 @@ public class PropertyController {
     public ReviewService reviewService;
     @Autowired
     public FavoriteService favoriteService;
+    @Autowired
+    public PropertyBSTService propertyBSTService;
 
     @Autowired
     public PropertyController(PropertyService propertyService) {
@@ -65,7 +65,7 @@ public class PropertyController {
 
     @GetMapping("/all")
     public String getAllProperties(Model model) {
-        model.addAttribute("properties", propertyService.getAllProperties());
+        model.addAttribute("properties", propertyBSTService.inOrderTraversal());
         return "propertyList";
     }
 
@@ -135,7 +135,6 @@ public class PropertyController {
                 e.printStackTrace();
             }
         });
-
         return "propertyDetails";
     }
 
@@ -146,8 +145,12 @@ public class PropertyController {
         if (user == null || !"SELLER".equalsIgnoreCase(user.getRole())) {
             return "redirect:/login";
         }
+        List<Property> allProperties = propertyBSTService.inOrderTraversal();
+        List<Property> sellerProperties = allProperties.stream()
+                .filter(p -> p.getSellerId().equals(user.getUserId()))
+                .collect(Collectors.toList());
 
-        model.addAttribute("properties", propertyService.getPropertiesBySeller(user.getUserId()));
+        model.addAttribute("properties", sellerProperties);
         return "sellerProperties";
     }
 
